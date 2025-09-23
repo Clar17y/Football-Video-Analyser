@@ -1,0 +1,36 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments and package caches
+.venv/
+.uv/
+.uv-cache/
+.local/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+
+# Data placeholders (store large assets outside git)
+data/
+
+# Codex binary files
+codex*

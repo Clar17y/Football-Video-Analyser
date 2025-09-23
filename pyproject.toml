@@ -1,0 +1,48 @@
+[project]
+name = "football-video-analyser"
+version = "0.1.0"
+description = "Analysis pipeline for grassroots football match footage."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]",
+    "python-dotenv>=1.0",
+    "ultralytics",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "ruff",
+    "pytest",
+    "pytest-cov",
+    "pyright",
+    "pre-commit",
+    "alembic",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.pyright]
+pythonVersion = "3.11"
+
+[tool.uv]
+managed = true

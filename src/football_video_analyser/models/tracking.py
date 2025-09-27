@@ -6,7 +6,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Iterable, Sequence
 
+try:  # pragma: no cover - progress bar is optional
+    from tqdm import tqdm  # type: ignore
+except Exception:  # pragma: no cover
+    tqdm = None  # type: ignore
+
 import numpy as np
+
+try:  # pragma: no cover - cv2 may not be available in all environments
+    import cv2
+except Exception:  # pragma: no cover
+    cv2 = None  # type: ignore
 
 try:  # pragma: no cover - optional import for type hints
     from ultralytics import YOLO  # type: ignore
@@ -102,7 +112,22 @@ def iter_tracked_objects(
         verbose=False,
     )
 
+    total_frames = None
+    if tqdm is not None and cv2 is not None:
+        try:
+            capture = cv2.VideoCapture(str(video_path))
+            frame_count = capture.get(cv2.CAP_PROP_FRAME_COUNT)
+            capture.release()
+            if frame_count and frame_count > 0:
+                total_frames = int(frame_count)
+        except Exception:  # pragma: no cover - progress bar is optional
+            total_frames = None
+
+    pbar = tqdm(total=total_frames, desc="Tracking", unit="frame") if tqdm is not None else None
+
     for frame_index, result in enumerate(results):
+        if pbar is not None:
+            pbar.update(1)
         boxes = getattr(result, "boxes", None)
         if boxes is None:
             continue
@@ -135,6 +160,9 @@ def iter_tracked_objects(
                 bbox_xyxy=bbox,  # type: ignore[arg-type]
                 track_id=track_id,
             )
+
+    if pbar is not None:
+        pbar.close()
 
 
 def detections_to_rows(detections: Iterable[TrackedObject]) -> list[dict[str, object]]:
